@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fasting Period Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+    }
+
+    input, select {
+      font-size: 1rem;
+      padding: 8px;
+      width: 100%;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 10px;
+      font-size: 1rem;
+      width: 100%;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 25px;
+      font-size: 1.2rem;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculate My Fasting Period</h1>
+
+  <label for="lastMeal">Last Meal Time:</label>
+  <input type="time" id="lastMeal">
+  <select id="lastMealPeriod">
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+
+  <label for="firstMeal">First Meal Time:</label>
+  <input type="time" id="firstMeal">
+  <select id="firstMealPeriod">
+    <option value="AM">AM</option>
+    <option value="PM">PM</option>
+  </select>
+
+  <label for="days">Days Between Meals:</label>
+  <input type="number" id="days" min="0" value="0">
+
+  <button onclick="calculateFast()">Calculate Fasting Time</button>
+
+  <div id="result"></div>
+
+  <script>
+    function convertTo24Hour(timeStr, period) {
+      let [hours, minutes] = timeStr.split(":").map(Number);
+      if (period === "PM" && hours !== 12) hours += 12;
+      if (period === "AM" && hours === 12) hours = 0;
+      return { hours, minutes };
+    }
+
+    function calculateFast() {
+      const lastTime = document.getElementById("lastMeal").value;
+      const lastPeriod = document.getElementById("lastMealPeriod").value;
+      const firstTime = document.getElementById("firstMeal").value;
+      const firstPeriod = document.getElementById("firstMealPeriod").value;
+      const days = parseInt(document.getElementById("days").value);
+
+      if (!lastTime || !firstTime || isNaN(days)) {
+        document.getElementById("result").innerText = "Please enter all values.";
+        return;
+      }
+
+      const last = convertTo24Hour(lastTime, lastPeriod);
+      const first = convertTo24Hour(firstTime, firstPeriod);
+
+      let lastTotal = last.hours * 60 + last.minutes;
+      let firstTotal = first.hours * 60 + first.minutes + days * 1440;
+
+      let diff = firstTotal - lastTotal;
+      let hrs = Math.floor(diff / 60);
+      let mins = diff % 60;
+
+      document.getElementById("result").innerText = `Your fast lasted ${hrs} hours and ${mins} minutes.`;
+    }
+  </script>
+</body>
+</html>
